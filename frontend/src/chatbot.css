@@ -5,6 +5,14 @@
   font-family: "Poppins", sans-serif;
 }
 
+body {
+  background: #B3BFFF; /* soft pastel blue */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 /* Main container */
 .chat-container {
   width: 100%;
