@@ -49,7 +49,7 @@ const Chatbot = () => {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h2>Socket AI</h2>
+        <h2>Aura AI</h2>
       </div>
 
       <div className="chat-box">
