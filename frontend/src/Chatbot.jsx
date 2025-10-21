@@ -30,7 +30,7 @@ const Chatbot = () => {
 
     const newMessage = { sender: "You", text: input, time };
     setMessages((prev) => [...prev, newMessage]);
-    socket.emit("ai-response",  input);
+    socket.emit("ai-response", input);
     setInput("");
   };
 
@@ -45,10 +45,15 @@ const Chatbot = () => {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h2>AI Chatbot 🤖</h2>
+        <h2>Socket AI</h2>
       </div>
 
       <div className="chat-box">
+        {messages.length === 0 && (
+          <div className="chat-placeholder">
+            Start conversation or ask anything...
+          </div>
+        )}
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -73,6 +78,31 @@ const Chatbot = () => {
         />
         <button onClick={sendMessage}>Send</button>
       </div>
+
+      <div className="chat-box">
+  {messages.map((msg, index) => (
+    <div
+      key={index}
+      className={`chat-message ${msg.sender === "You" ? "user" : "ai"}`}
+    >
+      <div className="msg-text">{msg.text}</div>
+      <div className="msg-meta">
+        <span>{msg.sender}</span>
+        <span className="time">{msg.time}</span>
+      </div>
+    </div>
+  ))}
+
+  {/* Loader bubble */}
+  {isTyping && (
+    <div className="chat-message ai typing">
+      <div className="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  )}
+</div>
+
     </div>
   );
 };
