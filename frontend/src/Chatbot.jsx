@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import "./Chatbot.css";
+import "./chatbot.css";
 
 const socket = io("https://aurachat-e0vh.onrender.com");
 
