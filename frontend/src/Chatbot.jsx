@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import "./Chatbot.css";
 
@@ -7,15 +7,14 @@ const socket = io("http://localhost:3000");
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     socket.on("ai-response-message", (response) => {
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      setMessages((prev) => [
-        ...prev,
-        { sender: "AI", text: response, time },
-      ]);
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setMessages((prev) => [...prev, { sender: "AI", text: response, time }]);
     });
 
     return () => socket.disconnect();
@@ -23,17 +22,24 @@ const Chatbot = () => {
 
   const sendMessage = () => {
     if (!input.trim()) return;
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const time = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
     const newMessage = { sender: "You", text: input, time };
     setMessages((prev) => [...prev, newMessage]);
-    socket.emit("ai-response", { prompt: input });
+    socket.emit("ai-response",  input);
     setInput("");
   };
 
-  // Scroll to bottom on new message
+  // Scroll to bottom whenever messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatBox = document.querySelector(".chat-box");
+    if (chatBox) {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
   }, [messages]);
 
   return (
@@ -55,7 +61,6 @@ const Chatbot = () => {
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
 
       <div className="chat-input">

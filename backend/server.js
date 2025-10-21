@@ -18,17 +18,17 @@ io.on("connection", (socket) => {
 
   socket.on("ai-response", async (data) => {
     try {
-      console.log("Received user prompt:", data.prompt);
+      console.log("Received user prompt:", data);
 
       // push user message
-      chat_history.push({ role: "user", content: data.prompt });
+      chat_history.push({ role: "user", parts: [{text: data}]});
 
       // generate AI response
       const response = await generateResponse(chat_history);
       console.log("AI response:", response);
 
       // push AI response
-      chat_history.push({ role: "model", content: response });
+      chat_history.push({ role: "model", parts: [{text: response}] });
 
       // send back to client
       socket.emit("ai-response-message", response);
