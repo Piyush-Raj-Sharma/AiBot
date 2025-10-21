@@ -5,7 +5,7 @@ const { Server } = require("socket.io");
 const generateResponse = require('./src/services/ai.service');
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: { origin: "http://localhost:5173" } });
+const io = new Server(httpServer, { cors: { origin: "*" } });
 
 let chat_history = []; // short-term memory
 
