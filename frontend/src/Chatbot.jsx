@@ -7,6 +7,7 @@ const socket = io("http://localhost:3000");
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     socket.on("ai-response-message", (response) => {
@@ -15,6 +16,7 @@ const Chatbot = () => {
         minute: "2-digit",
       });
       setMessages((prev) => [...prev, { sender: "AI", text: response, time }]);
+      setIsTyping(false);
     });
 
     return () => socket.disconnect();
@@ -30,6 +32,8 @@ const Chatbot = () => {
 
     const newMessage = { sender: "You", text: input, time };
     setMessages((prev) => [...prev, newMessage]);
+    setIsTyping(true); // Show loader
+
     socket.emit("ai-response", input);
     setInput("");
   };
@@ -54,6 +58,7 @@ const Chatbot = () => {
             Start conversation or ask anything...
           </div>
         )}
+
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -66,6 +71,16 @@ const Chatbot = () => {
             </div>
           </div>
         ))}
+
+        {isTyping && (
+          <div className="chat-message ai typing">
+            <div className="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="chat-input">
@@ -78,31 +93,6 @@ const Chatbot = () => {
         />
         <button onClick={sendMessage}>Send</button>
       </div>
-
-      <div className="chat-box">
-  {messages.map((msg, index) => (
-    <div
-      key={index}
-      className={`chat-message ${msg.sender === "You" ? "user" : "ai"}`}
-    >
-      <div className="msg-text">{msg.text}</div>
-      <div className="msg-meta">
-        <span>{msg.sender}</span>
-        <span className="time">{msg.time}</span>
-      </div>
-    </div>
-  ))}
-
-  {/* Loader bubble */}
-  {isTyping && (
-    <div className="chat-message ai typing">
-      <div className="typing-dots">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
-  )}
-</div>
-
     </div>
   );
 };
