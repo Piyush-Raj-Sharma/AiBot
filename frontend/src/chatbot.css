@@ -10,7 +10,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 /* Main container */
@@ -145,6 +144,12 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+
+  body{
+  display: block;
+  /* justify-content: center;
+  align-items: center; */
+  }
   .chat-container {
     height: 100vh;
     margin: 0;
