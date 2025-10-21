@@ -5,35 +5,41 @@ const { Server } = require("socket.io");
 const generateResponse = require('./src/services/ai.service');
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, { /* options */ });
+const io = new Server(httpServer, { cors: { origin: "http://localhost:5173" } });
 
-// There are two types of events: In-built events and Custom events
-
-// In-built events: connection, disconnect
-// Custom events: Any event defined by the developer
-
-chat_history = [] //applying short term memory
+let chat_history = []; // short-term memory
 
 io.on("connection", (socket) => {
-    console.log("a user connected");
+  console.log("user connected");
 
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-    });  
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
 
-    socket.on("ai-response", async(data)=>{
+  socket.on("ai-response", async (data) => {
+    try {
+      console.log("Received user prompt:", data.prompt);
 
-        console.log("Recieved user prompt:", data.prompt);
-        chat_history.push({role: "user", content: data.prompt}) // updating chat history
-      
-        const response = await generateResponse(chat_history);
-        console.log(response);
+      // push user message
+      chat_history.push({ role: "user", content: data.prompt });
 
-        chat_history.push({role: "model", content: response}) // updating chat history
-        socket.emit("ai-response-message", response );
-    })
+      // generate AI response
+      const response = await generateResponse(chat_history);
+      console.log("AI response:", response);
+
+      // push AI response
+      chat_history.push({ role: "model", content: response });
+
+      // send back to client
+      socket.emit("ai-response-message", response);
+
+    } catch (err) {
+      console.error("Error handling AI response:", err);
+      socket.emit("ai-response-message", "Server error occurred 😅");
+    }
+  });
 });
 
 httpServer.listen(3000, () => {
-    console.log("Server is running at port 3000");  
-})
+  console.log("Server is running at port 3000");
+});
