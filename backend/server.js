@@ -12,6 +12,8 @@ const io = new Server(httpServer, { /* options */ });
 // In-built events: connection, disconnect
 // Custom events: Any event defined by the developer
 
+chat_history = [] //applying short term memory
+
 io.on("connection", (socket) => {
     console.log("a user connected");
 
@@ -21,12 +23,14 @@ io.on("connection", (socket) => {
 
     socket.on("ai-response", async(data)=>{
 
-      console.log("Recieved user prompt:", data.prompt);
+        console.log("Recieved user prompt:", data.prompt);
+        chat_history.push({role: "user", content: data.prompt}) // updating chat history
       
-      const response = await generateResponse(data.prompt);
-      console.log("");
-      console.log(response);
-      socket.emit("ai-response-message", response );
+        const response = await generateResponse(chat_history);
+        console.log(response);
+
+        chat_history.push({role: "model", content: response}) // updating chat history
+        socket.emit("ai-response-message", response );
     })
 });
 
