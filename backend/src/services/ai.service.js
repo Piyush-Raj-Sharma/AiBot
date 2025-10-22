@@ -9,7 +9,7 @@ async function generateResponse(chat_history) {
   
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents: chat_history,
       config: {
         systemInstruction:
